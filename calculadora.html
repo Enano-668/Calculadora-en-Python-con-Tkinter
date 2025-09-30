@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora</title>
+    <!-- Cargar chart.js-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!--Cargar Math.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.3.1/math.min.js"></script> 
+</head>
+<body>
+    <!--Definir el Canvas para el grafico-->
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        canvas {
+            max-width: 600px;
+            margin: auto;
+        }
+        input, button {
+            margin: 100px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Calculadora</h2>
+    <input type="text" id="equation" placeholder="Ingrese una ecuación (ej: x^2)" size="30">
+    <button onclick="graficar()">Graficar</button>
+    <canvas id="grafico"></canvas>
+
+    <script>
+        function graficar() {
+            let equation = document.getElementById("equation").value;
+            let ctx = document.getElementById("grafico").getContext("2d");
+            let xValues = [];
+            let yValues = [];
+            
+            for (let x = -10; x <= 10; x += 0.1) {
+                xValues.push(x);
+                try {
+                    let y = math.evaluate(equation.replace(/x/g, `(${x})`));
+                    yValues.push(y);
+                } catch (error) {
+                    alert("Ecuación inválida");
+                    return;
+                }
+            }
+            
+            if (window.grafico) window.grafico.destroy();
+            window.grafico = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                        label: "Gráfico de la función",
+                        data: yValues,
+                        borderColor: "blue",
+                        borderWidth: 2,
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: "X" } },
+                        y: { title: { display: true, text: "Y" } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
